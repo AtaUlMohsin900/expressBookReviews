@@ -66,15 +66,28 @@ public_users.get("/author/:author", async (req, res) => {
 });
 
 // Get all books based on title
-public_users.get('/title/:title',function (req, res) {
+public_users.get("/title/:title", async (req, res) => {
   //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+  const matchingTitle = Object.values(await books).filter(
+    (book) => book.title.toLowerCase() === req.params.title.toLowerCase()
+  )[0];
+  if (matchingTitle) {
+    return res.status(200).json(matchingTitle);
+  } else {
+    return res.status(404).json({ message: "Title not found." });
+  }
 });
 
 //  Get book review
-public_users.get('/review/:isbn',function (req, res) {
+public_users.get("/review/:isbn", function (req, res) {
   //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+   const targetISBN = req.params.isbn;
+  const targetBook = books[targetISBN];
+  if (targetBook) {
+    return res.status(200).send(JSON.stringify(targetBook.reviews, null, 4));
+  } else {
+    return res.status(404).json({ message: "ISBN not found." });
+  }
 });
 
 module.exports.general = public_users;
